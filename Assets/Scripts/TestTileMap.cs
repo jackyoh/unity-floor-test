@@ -11,10 +11,11 @@ public class TestTileMap : MonoBehaviour {
     public TileBase rightWallToPlace;
     public TileBase right1WallToPlace;
     public TileBase floorRightToPlace;
-
+    private int rightCount = 3;
+    private int leftCount = -5;
 
     private Tilemap tilemap;
-    private int count = 0;
+    private int count = 1;
     private List<List<Vector3Int>> floorTileMap = new List<List<Vector3Int>>();
 
     void Start() {
@@ -114,7 +115,7 @@ public class TestTileMap : MonoBehaviour {
         levelFourCol.Add(new Vector3Int(4, -5, 0));
         levelFourCol.Add(new Vector3Int(3, -6, 0));
         levelFourCol.Add(new Vector3Int(3, -7, 0));
-        floorTileMap.Add(levelFourCol);
+        floorTileMap.Add(levelFourCol);int leftCount = -5;
 
 
         tilemap = GetComponent<Tilemap>();
@@ -122,89 +123,69 @@ public class TestTileMap : MonoBehaviour {
     }
 
     public void AddFloor() {
-        if (count < floorTileMap.Count) {
-            List<Vector3Int> levelRows = floorTileMap[count];
-            for (int i = 0 ; i < levelRows.Count ; i++) {
-                tilemap.SetTile(levelRows[i], tileToPlace);
+
+        int xPosition = 3;
+        for (int i = 0 ; i < count ; i++) {
+            if (i % 2 == 0) {
+                xPosition += 1;
             }
-            count += 1;
+            int xCount = xPosition;
+            int leftStart = (leftCount + (rightCount - 1) - 1) + i;
+            int yCount = 0 - i;
+            for (int j = leftStart ; j < rightCount + i ; j++) {
+                Vector3Int wallLeftPosition = new Vector3Int(xCount, yCount, 0);
+                //Debug.Log("(" + xCount + "," + yCount + ")");
+                tilemap.SetTile(wallLeftPosition, tileToPlace);
+                if (j % 2 == 0) {
+                    xCount -= 1;
+                }
+                yCount -= 1;
+            }
         }
+
+        count = count + 1;
+
     }
 
     private IEnumerator CheckInitialization() {
         yield return new WaitForSeconds(1f);
-        int []x = {1, 2, 2, 3, 3, 4, 4};
-        for (int k = 0 ; k < x.Length ; k++) {
-            int i = x[k];
-            for (int j = -3 + k ; j <= 3 + k ; j++) {
-                Vector3Int tilePosition = new Vector3Int(i, j, 0);
-                tilemap.SetTile(tilePosition, tileToPlace);
-                if ((j % 2) == 0) {
-                    i = i - 1;
+        int xxCount = 0;
+
+        for (int i = 0 ; i < rightCount ; i++) {
+            int xCount = xxCount; // 右上延伸
+            for (int y = leftCount + i; y <= 1 + i; y++) { // 左上到右下的長度
+                Vector3Int wallLeftPosition = new Vector3Int(xCount, y, 0);
+                tilemap.SetTile(wallLeftPosition, tileToPlace);
+                if (Mathf.Abs(y) % 2 == 0) {
+                    xCount -= 1;
                 }
             }
+            if (Mathf.Abs(i) % 2 == 0) {
+                xxCount += 1;
+            }
         }
-        Vector3Int wallLeftPosition = new Vector3Int(3, -3, 0);
-        tilemap.SetTile(wallLeftPosition, wallToPlace);
 
-        Vector3Int wallLeft1Position = new Vector3Int(4, -2, 0);
-        tilemap.SetTile(wallLeft1Position, leftWallToPlace);
+        int wallxCount = xxCount + 2;
+        int wallyCount = leftCount + (rightCount - 1);
+        for (int i = 0 ; i < rightCount ; i++) {
+            if ( Mathf.Abs(i) % 2 == 0 ) {
+                wallxCount -= 1;
+            }
+            Vector3Int wallLeft1Position = new Vector3Int(wallxCount, wallyCount);
+            Debug.Log("(" + wallxCount + "," + wallyCount + ")");
+            if (i == 0) {
+                tilemap.SetTile(wallLeft1Position, middleWallToPlace);
+            } else if (i == (rightCount - 1)) {
+                tilemap.SetTile(wallLeft1Position, wallToPlace);
+            } else {
+                tilemap.SetTile(wallLeft1Position, leftWallToPlace);
+            }
+            wallyCount -= 1;
+        }
+        
 
-        wallLeft1Position = new Vector3Int(4, -1, 0);
-        tilemap.SetTile(wallLeft1Position, leftWallToPlace);
 
-        wallLeft1Position = new Vector3Int(5, 0, 0);
-        tilemap.SetTile(wallLeft1Position, leftWallToPlace);
-
-        wallLeft1Position = new Vector3Int(5, 1, 0);
-        tilemap.SetTile(wallLeft1Position, leftWallToPlace);
-
-        wallLeft1Position = new Vector3Int(6, 2, 0);
-        tilemap.SetTile(wallLeft1Position, leftWallToPlace);
-
-        wallLeft1Position = new Vector3Int(6, 3, 0);
-        tilemap.SetTile(wallLeft1Position, leftWallToPlace);
-
-        Vector3Int wallMiddlePosition = new Vector3Int(6, 3, 0);
-        tilemap.SetTile(wallMiddlePosition, middleWallToPlace);
-
-        Vector3Int wallRightPosition = new Vector3Int(6, 4, 0);
-        tilemap.SetTile(wallRightPosition, rightWallToPlace);
-
-        wallRightPosition = new Vector3Int(5, 5, 0);
-        tilemap.SetTile(wallRightPosition, rightWallToPlace);
-
-        wallRightPosition = new Vector3Int(5, 6, 0);
-        tilemap.SetTile(wallRightPosition, rightWallToPlace);
-
-        wallRightPosition = new Vector3Int(4, 7, 0);
-        tilemap.SetTile(wallRightPosition, rightWallToPlace);
-
-        wallRightPosition = new Vector3Int(4, 8, 0);
-        tilemap.SetTile(wallRightPosition, rightWallToPlace);
-
-        wallRightPosition = new Vector3Int(3, 9, 0);
-        tilemap.SetTile(wallRightPosition, rightWallToPlace);
-
-        Vector3Int wallRight1Position = new Vector3Int(3, 9, 0);
-        tilemap.SetTile(wallRight1Position, right1WallToPlace);
-
-        Vector3Int floorRightPosition = new Vector3Int(1, 8, 0);
-        tilemap.SetTile(floorRightPosition, floorRightToPlace);
-
-        floorRightPosition = new Vector3Int(0, 7, 0);
-        tilemap.SetTile(floorRightPosition, floorRightToPlace);
-
-        floorRightPosition = new Vector3Int(0, 6, 0);
-        tilemap.SetTile(floorRightPosition, floorRightToPlace);
-
-        floorRightPosition = new Vector3Int(-1, 5, 0);
-        tilemap.SetTile(floorRightPosition, floorRightToPlace);
-
-        floorRightPosition = new Vector3Int(-1, 4, 0);
-        tilemap.SetTile(floorRightPosition, floorRightToPlace);
-
-        floorRightPosition = new Vector3Int(-2, 3, 0);
-        tilemap.SetTile(floorRightPosition, floorRightToPlace);
+        Debug.Log("xxCount:" + xxCount);
+        Debug.Log("x:" + (leftCount + (rightCount - 1) - 1));
     }
 }
