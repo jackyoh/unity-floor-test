@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class TestTileMap : MonoBehaviour {
+    public int rightCount = 5;
+    public int leftCount = -3;
+
     public TileBase tileToPlace;
     public TileBase wallToPlace;
     public TileBase leftWallToPlace;
@@ -13,9 +16,6 @@ public class TestTileMap : MonoBehaviour {
     public TileBase floorRightToPlace;
     public TileBase floorMiddleToPlace;
     public TileBase floorLeftPlace;
-
-    private int rightCount = 5;
-    private int leftCount = -3;
 
     private Tilemap tilemap;
     private int count = 1;
@@ -27,7 +27,8 @@ public class TestTileMap : MonoBehaviour {
     }
 
     public void AddFloor() {
-
+        tilemap.ClearAllTiles();
+        StartCoroutine(CheckInitialization());
     }
 
     private IEnumerator CheckInitialization() {
