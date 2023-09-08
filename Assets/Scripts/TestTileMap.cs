@@ -96,7 +96,6 @@ public class TestTileMap : MonoBehaviour {
             if (Mathf.Abs(i) % 2 == 1) {
                 wallRightXCount -= 1;
             }
-
             Vector3Int wallRight1Position = new Vector3Int(wallRightXCount, wallRightYCount);
             if (i == (oneLeftCellCount - 2)) {
                 tilemap.SetTile(wallRight1Position, right1WallToPlace);
