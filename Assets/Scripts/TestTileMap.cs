@@ -11,8 +11,11 @@ public class TestTileMap : MonoBehaviour {
     public TileBase rightWallToPlace;
     public TileBase right1WallToPlace;
     public TileBase floorRightToPlace;
-    private int rightCount = 3;
-    private int leftCount = -5;
+    public TileBase floorMiddleToPlace;
+    public TileBase floorLeftPlace;
+
+    private int rightCount = 5;
+    private int leftCount = -3;
 
     private Tilemap tilemap;
     private int count = 1;
@@ -24,7 +27,6 @@ public class TestTileMap : MonoBehaviour {
     }
 
     public void AddFloor() {
-        Debug.Log("Test....................");
 
     }
 
@@ -36,24 +38,41 @@ public class TestTileMap : MonoBehaviour {
         int initYValue = 3;
         for (int i = 0 ; i < rightCount ; i++) {
             int xCount = xxCount; // 右上延伸
-            for (int y = 3 + i ; y >= leftCount + i ; y--) { // 右下到左上
-                Debug.Log("(" + xCount + "," + y + ")");
+            for (int y = initYValue + i ; y >= leftCount + i ; y--) { // 右下到左上
+                //Debug.Log("(" + xCount + "," + y + ")");
                 Vector3Int wallLeftPosition = new Vector3Int(xCount, y, 0);
                 tempXCount = xCount;
                 tilemap.SetTile(wallLeftPosition, tileToPlace);
+
+                if (y == (initYValue + i)) {
+                    Debug.Log("(" + xCount + "," + y + ")");
+                    Vector3Int wallRightFloor = new Vector3Int(xCount, y);
+                    tilemap.SetTile(wallRightFloor, floorRightToPlace);
+                }
+
+                if (i == 0) {
+                    Vector3Int wallRightFloor = new Vector3Int(xCount, y);
+                    tilemap.SetTile(wallRightFloor, floorLeftPlace);
+                }
+
+                if (i == 0 && y == (initYValue + i)) {
+                    Vector3Int wallRightFloor = new Vector3Int(xCount, y);
+                    tilemap.SetTile(wallRightFloor, floorMiddleToPlace);
+                }
+
                 if (Mathf.Abs(y) % 2 == 1) {
                     xCount += 1;
                 }
-                
             }
+
             tempXXCount = xxCount;
             if (Mathf.Abs(i) % 2 == 0) {
                 xxCount += 1;
             }
         }
-        tilemap.SetTile(new Vector3Int(tempXXCount, (3 + (rightCount - 1))), null);
+        tilemap.SetTile(new Vector3Int(tempXXCount, (initYValue + (rightCount - 1)), 0), null);
 
-        int wallLeftxCount = tempXCount + 3;
+        int wallLeftxCount = tempXCount + initYValue;
         int wallLeftyCount = leftCount + rightCount - 1;
         for (int i = 0 ; i < rightCount ; i++) {
             if ( Mathf.Abs(i) % 2 == 0 ) {
@@ -70,9 +89,9 @@ public class TestTileMap : MonoBehaviour {
             wallLeftyCount -= 1;
         }
 
-        int wallRightXCount = tempXCount + 3 - 1;
+        int wallRightXCount = tempXCount + initYValue - 1;
         int wallRightYCount = leftCount + rightCount;
-        int oneLeftCellCount = Mathf.Abs(leftCount) + 3 + 1;
+        int oneLeftCellCount = Mathf.Abs(leftCount) + initYValue + 1;
         for (int i = 0 ; i < oneLeftCellCount - 1 ; i++) {
             if (Mathf.Abs(i) % 2 == 1) {
                 wallRightXCount -= 1;
